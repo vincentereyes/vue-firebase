@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+    <title>Vue Basics</title>
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+    <style>
+        .one {
+            color: green;
+        }
+        .two {
+            text-decoration: line-through;
+        }
+    </style>
+</head>
+
+<body>
+    
+    <h1>Vue Basics</h1>
+    <div id="app">
+        <h2>{{ title }}</h2>
+        <p>{{ greet('morning') }}</p>
+        <a :href='url'>DAVINCECODE.COM</a>
+
+        <div :class='classes'>Lol</div>
+        <input type="text" :value='name'>
+    </div>
+    
+
+    <script src="app.js"></script>
+</body>
+</html>

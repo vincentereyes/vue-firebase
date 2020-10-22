@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+    <title>Vue Basics</title>
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+    
+</head>
+
+<body>
+    
+    <h1>Vue Basics</h1>
+    <div id="app">
+        <h2>{{ title }}</h2>
+        <p v-if="showName">Vince</p>
+        <p v-else-if="showAge">26</p>
+        <button @click="toggleName">Showname: {{ showName }}</button>
+        <button @click="toggleAge">ShowAge: {{ showAge }}</button>
+    </div>
+    
+
+    <script src="app.js"></script>
+</body>
+</html>

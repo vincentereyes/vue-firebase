@@ -1,0 +1,112 @@
+<template>
+  <div class="index container">
+    <div class="card" v-for="smoothie in smoothies" :key="smoothie.id">
+      <div class="card-content">
+        <i class="material-icons delete" @click="deleteSmoothie(smoothie.id)">delete</i>
+        <h2 class="indigo-text">{{ smoothie.title }}</h2>
+        <ul class="ingredients">
+          <li v-for="(ing, index) in smoothie.ingredients" :key="index">
+            <span class="chip">{{ ing }}</span>
+          </li>
+        </ul>
+      </div>
+      <span class="btn-floating btn-large halfway-fab pink">
+        <router-link :to=" { name: 'EditSmoothie', params: { slug: smoothie.slug} }">
+          <i class="material-icons edit">edit</i>
+        </router-link>
+      </span>
+    </div>
+  </div>
+</template>
+
+<script>
+import db from '@/firebase/init'
+
+export default {
+  name: 'Index',
+  data () {
+    return {
+      smoothies: []
+    }
+  },
+  methods: {
+    deleteSmoothie(id) {
+       //DELETE DOC FROM FIRESTORE
+      db.collection('smoothies').doc(id).delete()
+      .then(() => {
+        this.smoothies = this.smoothies.filter(smoothie => {
+        return smoothie.id != id
+        })
+      })
+    }
+  },
+  created(){
+    let ref = db.collection('smoothies')
+    //fetch data from firestore
+    // ref.get()
+    // .then(snapshot => {
+    //   snapshot.forEach(doc => {
+    //     let smoothie = doc.data()
+    //     smoothie.id = doc.id
+    //     this.smoothies.push(smoothie)
+    //   })
+    // })
+
+    ref.onSnapshot(res => {
+      const changes = res.docChanges()
+
+      changes.forEach(change => {
+        if (change.type === "added"){
+          this.smoothies.push({
+            ...change.doc.data(),
+            id: change.doc.id
+          })
+        } else if (change.type === "modified") {
+          let updatedDoc = change.doc.data()
+          let objIndex = this.smoothies.findIndex(smoothie => smoothie.id == change.doc.id)
+
+          this.smoothies[objIndex].title = updatedDoc.title
+          this.smoothies[objIndex].ingredients = updatedDoc.ingredients
+          this.smoothies[objIndex].slug = updatedDoc.slug
+        } else {
+          this.smoothies = this.smoothies.filter(smoothie => {
+          return smoothie.id != change.doc.id
+          })
+        }
+      })
+    })
+
+
+  }
+}
+</script>
+
+<!-- Add "scoped" attribute to limit CSS to this component only -->
+<style>
+.index{
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  grid-gap: 30px;
+  margin-top: 60px;
+}
+.index h2{
+  font-size: 1.8em;
+  text-align: center;
+  margin-top: 0px;
+}
+.index .ingredients{
+  margin: 30px auto;
+
+}
+.index .ingredients li{
+  display: inline-block;
+}
+.index .delete{
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  cursor: pointer;
+  color: #aaa;
+  font-size: 1.4em;
+}
+</style>
